@@ -99,18 +99,19 @@
 
   .nav-links {
     display: flex;
-    gap: 2.5rem;
+    gap: 1.75rem;
     list-style: none;
   }
 
   .nav-links a {
     font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-dim);
     text-decoration: none;
     transition: color 0.2s;
+    white-space: nowrap;
   }
 
   .nav-links a:hover { color: var(--cyan); }
@@ -694,11 +695,14 @@
       </p>
     </div>
     <div class="contact-links">
-      <a href="/cdn-cgi/l/email-protection#167e737a7a79567f7b77716477667e386365" class="contact-link">
+      <a href="mailto:hello@imagraph.us" class="contact-link">
         <span class="contact-link-label">Email</span>
-        <span class="contact-link-value"><span class="__cf_email__" data-cfemail="92faf7fefefdd2fbfff3f5e0f3e2fabce7e1">[email&#160;protected]</span></span>
+        <span class="contact-link-value">hello@imagraph.us</span>
       </a>
-
+      <a href="https://github.com/imagraph-us" target="_blank" class="contact-link">
+        <span class="contact-link-label">GitHub</span>
+        <span class="contact-link-value">github.com/imagraph-us</span>
+      </a>
       <a href="https://imagraph.us" class="contact-link">
         <span class="contact-link-label">Web</span>
         <span class="contact-link-value">imagraph.us</span>
