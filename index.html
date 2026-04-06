@@ -509,8 +509,8 @@
     border-top: 1px solid var(--border);
     padding: 2rem 0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .footer-left {
@@ -518,6 +518,7 @@
     font-size: 0.65rem;
     letter-spacing: 0.1em;
     color: var(--text-dim);
+    text-align: center;
   }
 
   .footer-right {
@@ -525,6 +526,7 @@
     font-size: 0.65rem;
     letter-spacing: 0.08em;
     color: var(--text-dim);
+    text-align: center;
   }
 
   .footer-right span {
@@ -544,7 +546,7 @@
     .research-card { grid-template-columns: 1fr; }
     .research-arrow { display: none; }
     .nav-links { display: none; }
-    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    footer { text-align: center; }
   }
 </style>
 </head>
@@ -656,6 +658,7 @@
           <li>Human-in-the-loop always</li>
           <li>Operator supervised</li>
           <li>Open data output formats</li>
+          <li>Local or cloud storage — client's choice</li>
         </ul>
       </div>
       <div class="stack-item">
@@ -702,14 +705,19 @@
         <span class="contact-link-label">Web</span>
         <span class="contact-link-value">imagraph.us</span>
       </a>
-      <div class="contact-link" style="cursor:default;">
-        <span class="contact-link-label">Privacy</span>
-        <span class="contact-link-value" style="color:var(--text-dim); font-size:0.65rem;">All mapped data is owned by the client. We collect no personal data from site visitors.</span>
-      </div>
     </div>
   </div>
 
+
   <!-- FOOTER -->
   <footer>
-    <div class="footer-left">© 2026 Imagraph LLC · Wall Township, NJ</div>
-    <div
+    <div class="footer-left">
+      <span class="footer-copy">© 2026 Imagraph LLC · Wall Township, NJ</span>
+      <span class="footer-policy">Client data sovereignty guaranteed. No personal data collected.</span>
+    </div>
+    <div class="footer-right"><span>Building at ground level. Thinking at galactic scale.</span></div>
+  </footer>
+
+</div>
+</body>
+</html>
