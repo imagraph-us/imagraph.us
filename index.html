@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imagraph — Autonomous Ground Mapping</title>
+<meta name="description" content="Imagraph builds autonomous ground mapping robots for municipal and public safety infrastructure. Centimeter-accurate 3D spatial intelligence, starting on Earth.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Epilogue:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090c;
+    --surface: #0f1318;
+    --border: #1a2230;
+    --border-light: #243040;
+    --cyan: #00e5c8;
+    --cyan-dim: rgba(0,229,200,0.12);
+    --cyan-glow: rgba(0,229,200,0.06);
+    --orange: #ff5722;
+    --text: #b8ccd8;
+    --text-dim: #4a5a68;
+    --white: #e8f2f8;
+    --grid: rgba(0,229,200,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Epilogue', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Grid texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Radial glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30vh;
+    right: -20vw;
+    width: 70vw;
+    height: 70vh;
+    background: radial-gradient(ellipse, rgba(0,229,200,0.05) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown 0.6s ease both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .logo span {
+    color: var(--cyan);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 7rem 0 5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .hero-left { animation: fadeUp 0.8s 0.1s ease both; }
+  .hero-right { animation: fadeUp 0.8s 0.3s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 4.5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--white);
+    letter-spacing: -0.03em;
+    margin-bottom: 1.75rem;
+  }
+
+  h1 .accent {
+    color: var(--cyan);
+    display: block;
+  }
+
+  .hero-description {
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    max-width: 440px;
+  }
+
+  .cta-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--cyan);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.85rem 1.75rem;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--white); border-color: var(--white); }
+
+  /* Hero right — status panel */
+  .status-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .status-header {
+    background: var(--border);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status-header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .status-body {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    gap: 1rem;
+  }
+
+  .status-row:last-child { border-bottom: none; }
+
+  .status-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .status-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--white);
+    text-align: right;
+  }
+
+  .status-val.active { color: var(--cyan); }
+  .status-val.pending { color: var(--orange); }
+
+  /* ── WHAT WE DO ── */
+  .section {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 3rem;
+  }
+
+  .verticals {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 4rem;
+  }
+
+  .vertical {
+    background: var(--bg);
+    padding: 2rem 2rem 2.5rem;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .vertical:hover { background: var(--surface); }
+
+  .vertical-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .vertical h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .vertical p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  .vertical-tag {
+    position: absolute;
+    bottom: 1.25rem;
+    right: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--border-light);
+    text-transform: uppercase;
+  }
+
+  .vertical:hover .vertical-tag { color: var(--cyan); }
+
+  /* ── STACK ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .stack-item {
+    background: var(--bg);
+    padding: 1.5rem;
+  }
+
+  .stack-category {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-item ul {
+    list-style: none;
+  }
+
+  .stack-item li {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text);
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stack-item li:last-child { border-bottom: none; }
+
+  .stack-item li::before {
+    content: '·';
+    color: var(--cyan);
+  }
+
+  /* ── RESEARCH TEASER ── */
+  .research-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    text-decoration: none;
+    transition: border-color 0.2s;
+    margin-top: 4rem;
+  }
+
+  .research-card:hover { border-color: var(--cyan); }
+
+  .research-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 0.75rem;
+  }
+
+  .research-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .research-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .research-arrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.5rem;
+    color: var(--border-light);
+    transition: color 0.2s, transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .research-card:hover .research-arrow {
+    color: var(--cyan);
+    transform: translateX(4px);
+  }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .contact-section h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .contact-section p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .contact-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .contact-link:hover { background: var(--surface); }
+
+  .contact-link-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .contact-link-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyan);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+  }
+
+  .footer-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+  }
+
+  .footer-right span {
+    color: var(--cyan);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 4rem 0 3rem;
+    }
+    .verticals { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: 1fr; }
+    .contact-section { grid-template-columns: 1fr; gap: 2.5rem; }
+    .research-card { grid-template-columns: 1fr; }
+    .research-arrow { display: none; }
+    .nav-links { display: none; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="logo">IMAGRAPH<span>.US</span></a>
+    <ul class="nav-links">
+      <li><a href="#what-we-do">What We Do</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="eyebrow">Wall Township, NJ · Est. 2026</div>
+      <h1>
+        Ground truth
+        <span class="accent">at centimeter scale.</span>
+      </h1>
+      <p class="hero-description">
+        Imagraph builds autonomous ground mapping robots for municipal and public safety infrastructure. We create centimeter-accurate, georeferenced 3D spatial intelligence — the base layer that first responders, planners, and dispatch systems have never had.
+      </p>
+      <div class="cta-group">
+        <a href="#contact" class="btn-primary">Get in touch →</a>
+        <a href="#what-we-do" class="btn-ghost">See what we build</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="status-panel">
+        <div class="status-header">
+          <div class="status-dot"></div>
+          <span class="status-header-label">System Status · April 2026</span>
+        </div>
+        <div class="status-body">
+          <div class="status-row">
+            <span class="status-key">Platform</span>
+            <span class="status-val active">Jetson Orin Nano 8GB</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Framework</span>
+            <span class="status-val active">ROS2 Humble</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Stage</span>
+            <span class="status-val active">Prototype · Active Build</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Location</span>
+            <span class="status-val active">Wall Township, NJ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT WE DO -->
+  <div class="section" id="what-we-do">
+    <div class="section-label">01 · What We Build</div>
+    <div class="verticals">
+      <div class="vertical">
+        <div class="vertical-num">01</div>
+        <h3>Municipal Infrastructure</h3>
+        <p>Autonomous mapping of sidewalks, drainage, roads, and public spaces. Georeferenced point cloud data delivered to public works departments and city planners.</p>
+        <span class="vertical-tag">Primary Focus</span>
+      </div>
+      <div class="vertical">
+        <div class="vertical-num">02</div>
+        <h3>Public Safety Mapping</h3>
+        <p>Pre-incident 3D facility data for first responders. Schools, government buildings, public venues — mapped and accessible before an incident occurs.</p>
+        <span class="vertical-tag">Core Mission</span>
+      </div>
+      <div class="vertical">
+        <div class="vertical-num">03</div>
+        <h3>Warehouse & Logistics</h3>
+        <p>Interior mapping for inventory, layout, and compliance. Faster deployment cycles and clearer ROI than public sector work — a practical near-term track.</p>
+        <span class="vertical-tag">Near-Term</span>
+      </div>
+      <div class="vertical">
+        <div class="vertical-num">04</div>
+        <h3>Early Partner Program</h3>
+        <p>We're seeking pilot partners in municipal government, public safety, and logistics. Early partners shape the product and get preferred pricing. Reach out.</p>
+        <span class="vertical-tag">Open Now</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STACK -->
+  <div class="section" id="stack">
+    <div class="section-label">02 · Technical Stack</div>
+    <div class="stack-grid">
+      <div class="stack-item">
+        <div class="stack-category">Compute</div>
+        <ul>
+          <li>Jetson Orin Nano 8GB</li>
+          <li>JetPack 6.x / Ubuntu</li>
+          <li>ROS2 Humble</li>
+        </ul>
+      </div>
+      <div class="stack-item">
+        <div class="stack-category">Approach</div>
+        <ul>
+          <li>Human-in-the-loop always</li>
+          <li>Operator supervised</li>
+          <li>Open data output formats</li>
+        </ul>
+      </div>
+      <div class="stack-item">
+        <div class="stack-category">Status</div>
+        <ul>
+          <li>Prototype in active development</li>
+          <li>Pilot partners welcome</li>
+          <li>Wall Township, NJ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="section" id="research">
+    <div class="section-label">03 · Research & Publications</div>
+    <p style="font-size:0.9rem; color:var(--text-dim); max-width:560px; margin-bottom:0;">
+      Imagraph publishes open research as defensive prior art — establishing ideas in public before they can be locked behind patents. We give away the concepts. We sell the execution.
+    </p>
+    <a href="/research/galactic-network.html" class="research-card">
+      <div>
+        <div class="research-tag">Latest · April 2026 · Deep Science</div>
+        <h3>The Galactic Network: Pulsars, Antimatter, and the Infrastructure That's Already There</h3>
+        <p>On March 24, 2026, CERN transported antimatter for the first time. Here's why the nearest refueling station is already 280 light-years away — and we've been photographing it for decades.</p>
+      </div>
+      <div class="research-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-section" id="contact">
+    <div>
+      <h2>Let's talk.</h2>
+      <p style="margin-top:1rem;">
+        We're actively seeking municipal pilots, public safety partnerships, warehouse mapping clients, and grant co-applicants. If you're working on spatial intelligence for the physical world, we want to hear from you.
+      </p>
+      <p style="margin-top:1rem;">
+        Based in Wall Township, NJ. Operating statewide. Thinking nationally.
+      </p>
+    </div>
+    <div class="contact-links">
+      <a href="/cdn-cgi/l/email-protection#e58d8089898aa58c8884829784958dcb9096" class="contact-link">
+        <span class="contact-link-label">Email</span>
+        <span class="contact-link-value"><span class="__cf_email__" data-cfemail="8ae2efe6e6e5cae3e7ebedf8ebfae2a4fff9">[email&#160;protected]</span></span>
+      </a>
+      <a href="https://github.com/imagraph" class="contact-link" target="_blank">
+        <span class="contact-link-label">GitHub</span>
+        <span class="contact-link-value">github.com/imagraph</span>
+      </a>
+      <a href="https://imagraph.us" class="contact-link">
+        <span class="contact-link-label">Web</span>
+        <span class="contact-link-value">imagraph.us</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">© 2026 Imagraph LLC · Wall Township, NJ</div>
+    <div
