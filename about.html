@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imagraph — About</title>
+<meta name="description" content="Imagraph builds autonomous ground mapping robots for municipal and public safety infrastructure. Founded in Wall Township, NJ.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Epilogue:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090c;
+    --surface: #0f1318;
+    --border: #1a2230;
+    --border-light: #243040;
+    --cyan: #00e5c8;
+    --cyan-dim: rgba(0,229,200,0.12);
+    --cyan-glow: rgba(0,229,200,0.06);
+    --orange: #ff5722;
+    --text: #b8ccd8;
+    --text-dim: #4a5a68;
+    --white: #e8f2f8;
+    --grid: rgba(0,229,200,0.03);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Epilogue', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30vh;
+    right: -20vw;
+    width: 70vw;
+    height: 70vh;
+    background: radial-gradient(ellipse, rgba(0,229,200,0.05) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown 0.6s ease both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .logo span { color: var(--cyan); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-links a.active { color: var(--cyan); }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 5rem 0 4rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--white);
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    max-width: 720px;
+  }
+
+  .page-header h1 .accent { color: var(--cyan); }
+
+  .page-header p {
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.75;
+    max-width: 560px;
+    opacity: 0.85;
+  }
+
+  /* SECTION */
+  .section {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 3rem;
+  }
+
+  /* FOUNDER GRID */
+  .founder-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 5rem;
+    align-items: start;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  /* FOUNDER CARD */
+  .founder-card {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .avatar-wrap {
+    width: 100%;
+    aspect-ratio: 3/4;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .avatar-wrap svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .avatar-meta {
+    background: rgba(7,9,12,0.88);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .avatar-meta strong {
+    display: block;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+
+  .avatar-meta span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .founder-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .tag.hi {
+    border-color: rgba(0,229,200,0.3);
+    color: var(--cyan);
+    background: var(--cyan-glow);
+  }
+
+  /* FOUNDER STORY */
+  .founder-story {
+    padding-top: 2px;
+  }
+
+  .founder-name {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .founder-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 2.5rem;
+  }
+
+  .story-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .story-block p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .story-block p strong {
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  /* WHY NOW CALLOUT */
+  .why-now {
+    margin-top: 2.5rem;
+    padding: 1.5rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--cyan);
+  }
+
+  .why-now-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 0.75rem;
+  }
+
+  .why-now p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    opacity: 0.8;
+  }
+
+  /* BUILDING TOWARD */
+  .building-section {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .building-grid {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .building-grid h2 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .building-grid p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.75;
+    max-width: 500px;
+  }
+
+  .role-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .role-item {
+    background: var(--bg);
+    padding: 0.9rem 1.1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: background 0.2s, color 0.2s;
+    cursor: default;
+  }
+
+  .role-item::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border-light);
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .role-item:hover {
+    background: var(--surface);
+    color: var(--cyan);
+  }
+
+  .role-item:hover::before { background: var(--cyan); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-left, .footer-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .footer-right span { color: var(--cyan); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .founder-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .founder-card { position: static; }
+    .building-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="logo">IMAGRAPH<span>.US</span></a>
+    <ul class="nav-links">
+      <li><a href="/#what-we-do">What We Do</a></li>
+      <li><a href="/#stack">Stack</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/about" class="active">About</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="eyebrow">Wall Township, NJ · Est. 2026</div>
+    <h1>The physical world runs on infrastructure.<br><span class="accent">Most of it has never been mapped.</span></h1>
+    <p>
+      Infrastructure health monitoring built from the ground up with AI as a collaborator,
+      not a surveillance tool. No personal data. No privacy tradeoffs.
+      Just the physical world, mapped honestly.
+    </p>
+  </div>
+
+  <!-- FOUNDER SECTION -->
+  <div class="section" id="founder">
+    <div class="section-label">01 · Founder</div>
+
+    <div class="founder-grid">
+
+      <!-- Card -->
+      <div class="founder-card">
+        <div class="avatar-wrap">
+          <!-- Swap this SVG block for an <img> tag when you have a photo -->
+          <svg viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="240" height="320" fill="#0f1318"/>
+            <rect x="70" y="52" width="100" height="116" rx="50" fill="#1a2230"/>
+            <rect x="50" y="188" width="140" height="132" rx="4" fill="#131820"/>
+            <circle cx="120" cy="110" r="44" stroke="#00e5c8" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.6"/>
+            <line x1="120" y1="52" x2="120" y2="62" stroke="#00e5c8" stroke-width="1" opacity="0.6"/>
+            <line x1="120" y1="158" x2="120" y2="168" stroke="#00e5c8" stroke-width="1" opacity="0.6"/>
+            <line x1="70" y1="110" x2="80" y2="110" stroke="#00e5c8" stroke-width="1" opacity="0.6"/>
+            <line x1="160" y1="110" x2="170" y2="110" stroke="#00e5c8" stroke-width="1" opacity="0.6"/>
+            <rect x="88" y="210" width="64" height="4" rx="2" fill="#1a2230"/>
+            <rect x="100" y="224" width="40" height="4" rx="2" fill="#1a2230"/>
+          </svg>
+          <div class="avatar-meta">
+            <strong>Chris</strong>
+            <span>Wall Twp, NJ · Founder</span>
+          </div>
+        </div>
+        <div class="founder-tags">
+          <span class="tag hi">ROS2</span>
+          <span class="tag hi">LiDAR</span>
+          <span class="tag hi">Edge AI</span>
+          <span class="tag">Jetson Orin</span>
+          <span class="tag">SLAM</span>
+          <span class="tag">RTK GPS</span>
+          <span class="tag">GIS</span>
+          <span class="tag">Public Safety</span>
+        </div>
+      </div>
+
+      <!-- Story -->
+      <div class="founder-story">
+        <div class="founder-name">Chris</div>
+        <div class="founder-role">Founder, Imagraph LLC</div>
+
+        <div class="story-block">
+          <p>
+            Most of America's critical infrastructure was built in the mid-20th century.
+            Bridges, water mains, stormwater systems, transit tunnels.
+            <strong>It was designed to last 50 years. A lot of it is past that now.</strong>
+            The country is running deferred maintenance at a scale that doesn't show up
+            until something fails catastrophically and publicly.
+          </p>
+
+          <p>
+            The core problem isn't money. It's information.
+            Municipalities can't prioritize what they can't measure.
+            Most infrastructure has never been digitized at a resolution
+            that lets you actually track change over time, model stress, or catch
+            a problem before it becomes a collapse. Static surveys taken every decade
+            are not a health monitoring system. They are a snapshot of the past.
+          </p>
+
+          <p>
+            Imagraph is building toward <strong>4D spatial intelligence</strong> for physical infrastructure.
+            Centimeter-accurate 3D maps captured repeatedly over time, with AI analyzing
+            the delta between each pass. Not just where things are, but how they are changing.
+            Cracks that widen. Surfaces that settle. Drainage patterns that shift.
+            The kind of signal that lets an engineer intervene at a fraction of the cost
+            of emergency response or full replacement.
+          </p>
+
+          <div class="why-now">
+            <div class="why-now-label">Why now</div>
+            <p>
+              Edge AI inference, solid-state LiDAR, and RTK correction networks all reached
+              commodity price points within the last 24 months. The hardware to do this correctly
+              finally costs less than the problem it solves. Imagraph is moving while that window is open.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BUILDING TOWARD -->
+  <div class="building-section" id="team">
+    <div class="section-label">02 · Team</div>
+    <div class="building-grid">
+      <div>
+        <h2>Building the team around the mission.</h2>
+        <p>
+          Imagraph is seeking engineers and advisors with experience in robotics, GIS, and public safety systems.
+          If you read ROS2 documentation for fun, we should talk.
+          Early contributors shape the product and the company.
+        </p>
+        <br>
+        <p>
+          Reach out at <a href="mailto:hello@imagraph.us" style="color:var(--cyan); text-decoration:none; font-family:'DM Mono',monospace; font-size:0.85rem;">hello@imagraph.us</a>
+        </p>
+      </div>
+      <div class="role-list">
+        <div class="role-item">ROS2 / Robotics Eng</div>
+        <div class="role-item">GIS / Spatial Data</div>
+        <div class="role-item">Public Safety Advisor</div>
+        <div class="role-item">ML / Edge Inference</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">© 2026 Imagraph LLC · Wall Township, NJ</div>
+    <div class="footer-right">Building at ground level. <span>Thinking at scale.</span></div>
+  </footer>
+
+</div>
+</body>
+</html>
